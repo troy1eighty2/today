@@ -1,4 +1,5 @@
 import sqlite3
+import argparse
 
 
 def createDatabase():
@@ -16,11 +17,19 @@ def createDatabase():
     conn.close()
 
 
+def argparse():
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument()
+    pass
+
+
 def submission():
     conn = sqlite3.connect("habits.db")
     cursor = conn.cursor()
     cursor.execute("""
-                   
+        INSERT INTO habits (habit, date, status) 
+        VALUES ()
     """)
     conn.commit()
     conn.close()
@@ -29,12 +38,6 @@ def submission():
 def displayMap():
     green_square = "\033[32m■\033[0m"  # Green square
     black_square = "\033[30m■\033[0m"  # Black square
-    print(green_square)
-    print(green_square)
-    print(black_square)
-    print(green_square)
-    print(green_square)
-    print(green_square)
 
 
 def main():
