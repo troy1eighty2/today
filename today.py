@@ -74,13 +74,37 @@ def habits(arguments):
         FROM habits
     """)
     result = [row[0] for row in cursor.fetchall()]
-    print(result)
+
+    print("Habits Being Tracked: ", end="")
+    for n in result:
+        print(f"{n} ", end="")
+    print("")
 
     conn.close()
 
 
-def track():
-    pass
+def track(arguments):
+    if not arguments or len(arguments) != 2:
+        print("provide proper number of arguments. refer to README or -h for help")
+        return
+    conn = sqlite3.connect("habits.db")
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT habit
+        FROM habits
+    """)
+
+    result = [row[0] for row in cursor.fetchall()]
+
+    if arguments[0] not in result:
+        print("habit does not exist. input a valid habit.")
+        return
+    else:
+        print("processing")
+
+    conn.commit()
+    conn.close()
 
 
 def view():
