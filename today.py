@@ -37,7 +37,7 @@ def parseInput():
     return args
 
 
-editList():
+def editList():
     pass
 
 
@@ -65,13 +65,13 @@ def editChoices():
 def main():
     # createDatabase()
     # displayMap()
-    args = parseInput()
-    todays_date = datetime.datetime.today()
-    date_object = datetime.date(
-        todays_date.year, todays_date.month, todays_date.day)
-    print(date_object)
-    print(args.habit)
-    print(args.status)
+    # args = parseInput()
+    # todays_date = datetime.datetime.today()
+    # date_object = datetime.date(
+    #     todays_date.year, todays_date.month, todays_date.day)
+    # print(date_object)
+    # print(args.habit)
+    # print(args.status)
 
 
 if __name__ == "__main__":
