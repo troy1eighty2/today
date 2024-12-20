@@ -35,10 +35,25 @@ def parseInput():
                         help='additional arguments')
 
     args = parser.parse_args()
-    return args
+    if args.mode == "habits":
+        habits(args.add_args)
+    elif args.mode == "track":
+        track(args.add_args)
+    elif args.mode == "view":
+        view(args.add_args)
+    else:
+        print("invalid mode. -h for more information")
 
 
-def editList():
+def habits():
+    pass
+
+
+def track():
+    pass
+
+
+def view():
     pass
 
 
@@ -65,16 +80,13 @@ def editChoices():
 
 
 def main():
-    print("yo")
-    # createDatabase()
-    # parseInput()
+    createDatabase()
+    args = parseInput()
+
     # args = parseInput()
     # todays_date = datetime.datetime.today()
     # date_object = datetime.date(
     #     todays_date.year, todays_date.month, todays_date.day)
-    # print(date_object)
-    # print(args.habit)
-    # print(args.status)
 
 
 if __name__ == "__main__":
