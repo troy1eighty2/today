@@ -8,9 +8,14 @@ today is a cli heatmap tool to help keep you accountable with whatever habit you
 - view (display heatmaps)
 
 `today habits [habit1] [habit2] [habitn]`
+
 add or remove habits to be tracked
 
-`today track [habit] [status]`
+`today track [*habit] [*status]`
 
+log your habit
 
+`today view [month] [year] [day]`
+
+display all heatmaps
 
