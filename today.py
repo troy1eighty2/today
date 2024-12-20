@@ -18,8 +18,7 @@ def createDatabase():
     """)
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS habits(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            habit TEXT NOT NULL
+            habit TEXT PRIMARY KEY NOT NULL
         )
     """)
     conn.commit()
@@ -45,8 +44,39 @@ def parseInput():
         print("invalid mode. -h for more information")
 
 
-def habits():
-    pass
+def habits(arguments):
+    conn = sqlite3.connect("habits.db")
+    cursor = conn.cursor()
+    if arguments:
+        cursor.execute("""
+            SELECT habit
+            FROM habits
+        """)
+
+        # flatten the results
+        result = [row[0] for row in cursor.fetchall()]
+
+        for n in arguments:
+            if n in result:
+                cursor.execute("""
+                    DELETE FROM habits
+                    WHERE habit = ?
+                """, (n,))
+            else:
+                cursor.execute("""
+                    INSERT INTO habits (habit)
+                    VALUES (?)
+                """, (n,))
+
+    conn.commit()
+    cursor.execute("""
+        SELECT habit
+        FROM habits
+    """)
+    result = [row[0] for row in cursor.fetchall()]
+    print(result)
+
+    conn.close()
 
 
 def track():
