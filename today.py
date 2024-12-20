@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import sqlite3
 import datetime
 from datetime import date
@@ -28,10 +29,10 @@ def createDatabase():
 def parseInput():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('habit', type=str,
-                        help='the str habit you are logging')
-    parser.add_argument('status', type=int,
-                        help='1 for complete, 0 for incomplete')
+    parser.add_argument('mode', type=str,
+                        help='habits or track or view')
+    parser.add_argument('add_args', type=str, nargs='*',
+                        help='additional arguments')
 
     args = parser.parse_args()
     return args
@@ -60,11 +61,13 @@ def displayMap():
 
 
 def editChoices():
+    pass
 
 
 def main():
+    print("yo")
     # createDatabase()
-    # displayMap()
+    # parseInput()
     # args = parseInput()
     # todays_date = datetime.datetime.today()
     # date_object = datetime.date(
