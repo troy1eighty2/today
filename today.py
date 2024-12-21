@@ -8,17 +8,21 @@ import argparse
 def createDatabase():
     conn = sqlite3.connect("habits.db")
     cursor = conn.cursor()
+    cursor.execute("PRAGMA foreign_keys = ON")
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS habits(
+            habit TEXT PRIMARY KEY NOT NULL
+        )
+    """)
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS log(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             habit TEXT NOT NULL,
             date TEXT NOT NULL,
-            status INTEGER
-        )
-    """)
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS habits(
-            habit TEXT PRIMARY KEY NOT NULL
+            status INTEGER,
+            FOREIGN KEY (habit) REFERENCES habits(habit)
+                ON DELETE CASCADE
+                ON UPDATE CASCADE
         )
     """)
     conn.commit()
@@ -111,15 +115,39 @@ def track(arguments):
             date_object = datetime.date(
                 todays_date.year, todays_date.month, todays_date.day)
             cursor.execute("""
-                INSERT INTO log (habit, date, status)
-                VALUES (?,?,?)
-            """, (arguments[0], date_object, int(arguments[1])))
+                SELECT habit, date
+                FROM log
+                WHERE habit = ? AND date = ?
+            """, (arguments[0], date_object))
+            result = cursor.fetchall()
+            if len(result) == 0:
+                cursor.execute("""
+                    INSERT INTO log (habit, date, status)
+                    VALUES (?,?,?)
+                """, (arguments[0], date_object, int(arguments[1])))
+            else:
+                cursor.execute("""
+                    UPDATE log
+                    SET status = ?
+                    WHERE habit = ? AND date = ?
+                """, (int(arguments[1]), arguments[0], date_object))
+
     conn.commit()
     conn.close()
 
 
-def view():
-    pass
+def view(arguments):
+    conn = sqlite3.connect('habits.db')
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT *
+        FROM log
+        ORDER BY habit ASC, date DESC
+    """)
+
+    result = cursor.fetchall()
+    print(result)
 
 
 def displayMap():
