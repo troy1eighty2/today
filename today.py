@@ -99,10 +99,21 @@ def track(arguments):
 
     if arguments[0] not in result:
         print("habit does not exist. input a valid habit.")
+        conn.close()
         return
     else:
-        print("processing")
-
+        if int(arguments[1]) not in [0, 1]:
+            print("not a valid status. input 1 for true, 0 for false.")
+            conn.close()
+            return
+        else:
+            todays_date = datetime.datetime.today()
+            date_object = datetime.date(
+                todays_date.year, todays_date.month, todays_date.day)
+            cursor.execute("""
+                INSERT INTO log (habit, date, status)
+                VALUES (?,?,?)
+            """, (arguments[0], date_object, int(arguments[1])))
     conn.commit()
     conn.close()
 
@@ -111,36 +122,14 @@ def view():
     pass
 
 
-def submission(args):
-    todays_date = datetime.datetime.today()
-    conn = sqlite3.connect("habits.db")
-    cursor = conn.cursor()
-
-    cursor.execute("""
-        INSERT INTO log (habit, date, status)
-        VALUES (args.habit, todays_date, args.status)
-    """)
-    conn.commit()
-    conn.close()
-
-
 def displayMap():
     green_square = "\033[32m■\033[0m"  # Green square
     black_square = "\033[30m■\033[0m"  # Black square
 
 
-def editChoices():
-    pass
-
-
 def main():
     createDatabase()
     args = parseInput()
-
-    # args = parseInput()
-    # todays_date = datetime.datetime.today()
-    # date_object = datetime.date(
-    #     todays_date.year, todays_date.month, todays_date.day)
 
 
 if __name__ == "__main__":
