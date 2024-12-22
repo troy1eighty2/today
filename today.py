@@ -3,6 +3,7 @@ import sqlite3
 import datetime
 from datetime import date
 import argparse
+import getpass
 
 
 def createDatabase():
@@ -138,22 +139,33 @@ def track(arguments):
 
 
 def view(arguments):
+    green_square = "\033[32m■\033[0m"  # Green square
+    black_square = "\033[30m■\033[0m"  # Black square
+
+    # DASHBOARD
+    # current_time =
+    print(f"Hi {getpass.getuser()}")
+
     conn = sqlite3.connect('habits.db')
     cursor = conn.cursor()
 
-    cursor.execute("""
-        SELECT *
-        FROM log
-        ORDER BY habit ASC, date DESC
-    """)
+    if not arguments:
+        cursor.execute("""
+            SELECT *
+            FROM log
+            ORDER BY habit ASC, date DESC
+        """)
 
-    result = cursor.fetchall()
-    print(result)
+        result = cursor.fetchall()
+        print(result)
 
-
-def displayMap():
-    green_square = "\033[32m■\033[0m"  # Green square
-    black_square = "\033[30m■\033[0m"  # Black square
+    else:
+        pass
+        # # print by year month date
+        #
+        # if len(arguments) == 3:
+        # elif len(arguments) == 2:
+        # else:
 
 
 def main():
