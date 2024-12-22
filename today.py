@@ -2,6 +2,7 @@
 import dotenv
 import sqlite3
 import datetime
+import pandas
 from datetime import date
 import argparse
 import getpass
@@ -54,8 +55,11 @@ def parseInput():
 
 
 def habits(arguments):
+
     conn = sqlite3.connect("habits.db")
     cursor = conn.cursor()
+    cursor.execute("PRAGMA foreign_keys = ON")
+
     if arguments:
         cursor.execute("""
             SELECT habit
@@ -76,8 +80,20 @@ def habits(arguments):
                     INSERT INTO habits (habit)
                     VALUES (?)
                 """, (n,))
+                conn.commit()
+                date_range = pandas.date_range(
+                    start="2025-01-01", end="2025-12-31")
+                for el in date_range:
+                    # print(el.strftime("%A"))
+                    day = f"{
+                        el.year}-{el.month}-{el.day}"
+                    cursor.execute("""
+                        INSERT INTO log (habit, date, status)
+                        VALUES (?,?,?)
+                    """, (n, day, 0))
 
     conn.commit()
+
     cursor.execute("""
         SELECT habit
         FROM habits
@@ -98,6 +114,7 @@ def track(arguments):
         return
     conn = sqlite3.connect("habits.db")
     cursor = conn.cursor()
+    cursor.execute("PRAGMA foreign_keys = ON")
 
     cursor.execute("""
         SELECT habit
@@ -165,9 +182,12 @@ def view(arguments):
 
     # if no arguments, then there are no more tasks
     # if there are some tasks left, inform that there are more tasks
+    print("there are no kmomre tasks")
+    print("")
 
     conn = sqlite3.connect('habits.db')
     cursor = conn.cursor()
+    cursor.execute("PRAGMA foreign_keys = ON")
 
     if not arguments:
         cursor.execute("""

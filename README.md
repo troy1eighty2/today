@@ -19,3 +19,5 @@ log your habit
 
 display all heatmaps
 
+ex:
+
