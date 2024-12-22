@@ -112,8 +112,9 @@ def track(arguments):
             return
         else:
             todays_date = datetime.datetime.today()
-            date_object = datetime.date(
-                todays_date.year, todays_date.month, todays_date.day)
+
+            date_object = f"{
+                todays_date.year}-{todays_date.month}-{todays_date.day}"
             cursor.execute("""
                 SELECT habit, date
                 FROM log
