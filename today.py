@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
+import dotenv
 import sqlite3
 import datetime
 from datetime import date
 import argparse
 import getpass
+
+
+dotenv.load_dotenv()
 
 
 def createDatabase():
@@ -143,8 +147,24 @@ def view(arguments):
     black_square = "\033[30m■\033[0m"  # Black square
 
     # DASHBOARD
-    # current_time =
-    print(f"Hi {getpass.getuser()}")
+    current_hour = datetime.datetime.now().hour
+    print("")
+    if current_hour <= 12:
+        print("Good morning", end="")
+    elif current_hour <= 19:
+        print("Good afternoon", end="")
+    else:
+        print("Good evening", end="")
+    print(f", {getpass.getuser()}.")
+    print("")
+
+    print(f"The date is ")
+    print("")
+    print(f"The high for today is and the low is")
+    print("")
+
+    # if no arguments, then there are no more tasks
+    # if there are some tasks left, inform that there are more tasks
 
     conn = sqlite3.connect('habits.db')
     cursor = conn.cursor()
