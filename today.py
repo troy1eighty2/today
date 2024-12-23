@@ -75,6 +75,7 @@ def habits(arguments):
                     DELETE FROM habits
                     WHERE habit = ?
                 """, (n,))
+                conn.commit()
             else:
                 cursor.execute("""
                     INSERT INTO habits (habit)
@@ -92,8 +93,7 @@ def habits(arguments):
                         INSERT INTO log (habit, date, status)
                         VALUES (?,?,?)
                     """, (n, day, 0))
-
-    conn.commit()
+                    conn.commit()
 
     cursor.execute("""
         SELECT habit
@@ -186,6 +186,8 @@ def view(arguments):
     print("there are no more tasks")
     print("")
 
+    print("Habit")
+    print("Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec")
     conn = sqlite3.connect('habits.db')
     cursor = conn.cursor()
     cursor.execute("PRAGMA foreign_keys = ON")
@@ -200,11 +202,25 @@ def view(arguments):
         result = cursor.fetchall()
         weeks_of_the_month = group(result)
         for week in weeks_of_the_month:
+            previous_month = 1
+            spacing = 7
             for day in week:
+                processed_day = datetime.datetime.strptime(day[2], "%Y-%m-%d")
+                months_offset = processed_day.month - previous_month
+                if processed_day.month != previous_month:
+                    for i in range(months_offset):
+                        for j in range(spacing):
+                            print(" ", end="")
+                        if months_offset > 1:
+                            print(" ", end="")
+                    print(" ", end="")
+                    previous_month = processed_day.month
+                    spacing = 7
                 if day[-1] == 1:
                     print(green_square, end="")
                 else:
                     print(gray_square, end="")
+                spacing -= 1
             print("")
 
     else:
