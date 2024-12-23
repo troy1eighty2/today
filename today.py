@@ -83,7 +83,7 @@ def habits(arguments):
                 """, (n,))
                 conn.commit()
                 date_range = pandas.date_range(
-                    start="2025-01-01", end="2025-12-31")
+                    start="2023-01-01", end="2023-12-31")
                 for el in date_range:
                     # print(el.strftime("%A"))
                     day = f"{
@@ -149,14 +149,15 @@ def track(arguments):
                     INSERT INTO log (habit, date, status)
                     VALUES (?,?,?)
                 """, (arguments[0], date_object, int(arguments[1])))
+                conn.commit()
             else:
                 cursor.execute("""
                     UPDATE log
                     SET status = ?
                     WHERE habit = ? AND date = ?
                 """, (int(arguments[1]), arguments[0], date_object))
+                conn.commit()
 
-    conn.commit()
     conn.close()
 
 
@@ -208,11 +209,16 @@ def view(arguments):
                 processed_day = datetime.datetime.strptime(day[2], "%Y-%m-%d")
                 months_offset = processed_day.month - previous_month
                 if processed_day.month != previous_month:
-                    for i in range(months_offset):
-                        for j in range(spacing):
+                    for j in range(spacing):
+                        print(" ", end="")
+                    if months_offset > 1:
+                        for i in range(months_offset - 1):
+                            for j in range(7):
+                                print(" ", end="")
+                        print(" ", end="")
+                        for i in range(months_offset-2):
                             print(" ", end="")
-                        if months_offset > 1:
-                            print(" ", end="")
+
                     print(" ", end="")
                     previous_month = processed_day.month
                     spacing = 7
