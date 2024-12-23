@@ -1,6 +1,4 @@
-# IS THE GREATEST,
-# DAY
-# I'VE EVER KNOWN...
+# IS THE GREATEST. DAY. I'VE EVER. KNOWN...
 ...and a cli heatmap tool to help keep you accountable with whatever habit you are trying to establish.
 
 # usage
