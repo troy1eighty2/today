@@ -187,7 +187,7 @@ def view(arguments):
     print("")
 
     print("Habit")
-    print("Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec")
+    print("Jan     Feb     Mar     Apr     May     Jun     Jul     Aug     Sep     Oct     Nov     Dec")
     conn = sqlite3.connect('habits.db')
     cursor = conn.cursor()
     cursor.execute("PRAGMA foreign_keys = ON")
