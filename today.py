@@ -86,7 +86,8 @@ def habits(arguments):
                 for el in date_range:
                     # print(el.strftime("%A"))
                     day = f"{
-                        el.year}-{el.month}-{el.day}"
+                        el.year}-{el.month:02d}-{el.day:02d}"
+                    print(day)
                     cursor.execute("""
                         INSERT INTO log (habit, date, status)
                         VALUES (?,?,?)
@@ -136,7 +137,7 @@ def track(arguments):
             todays_date = datetime.datetime.today()
 
             date_object = f"{
-                todays_date.year}-{todays_date.month}-{todays_date.day}"
+                todays_date.year}-{todays_date.month:02d}-{todays_date.day:02d}"
             cursor.execute("""
                 SELECT habit, date
                 FROM log
@@ -161,7 +162,7 @@ def track(arguments):
 
 def view(arguments):
     green_square = "\033[32m■\033[0m"  # Green square
-    black_square = "\033[30m■\033[0m"  # Black square
+    gray_square = "\033[90m■\033[0m"  # Gray square
 
     # DASHBOARD
     current_hour = datetime.datetime.now().hour
@@ -182,7 +183,7 @@ def view(arguments):
 
     # if no arguments, then there are no more tasks
     # if there are some tasks left, inform that there are more tasks
-    print("there are no kmomre tasks")
+    print("there are no more tasks")
     print("")
 
     conn = sqlite3.connect('habits.db')
@@ -193,11 +194,18 @@ def view(arguments):
         cursor.execute("""
             SELECT *
             FROM log
-            ORDER BY habit ASC, date DESC
+            ORDER BY habit ASC, date ASC
         """)
 
         result = cursor.fetchall()
-        print(result)
+        weeks_of_the_month = group(result)
+        for week in weeks_of_the_month:
+            for day in week:
+                if day[-1] == 1:
+                    print(green_square, end="")
+                else:
+                    print(gray_square, end="")
+            print("")
 
     else:
         pass
@@ -206,6 +214,38 @@ def view(arguments):
         # if len(arguments) == 3:
         # elif len(arguments) == 2:
         # else:
+
+
+def group(rows):
+    # separate into 12 data structures, 1 for each month
+    # initialize 4 rows, one for each week of the month
+    # for each month of the habit:
+    #   for each day of the month:
+    #      if day == sunday:
+    #       add to week[n]
+    #           n ++
+    #       else:
+    #          add to week[n]
+
+    # aligned indexing for easier access
+    months = [[] for i in range(13)]
+    weeks_of_the_month = [[] for i in range(6)]
+    counter = 0
+    for day in rows:
+        processed_day = datetime.datetime.strptime(day[2], "%Y-%m-%d")
+        months[processed_day.month].append(day)
+
+    for month in months:
+        for day in month:
+            processed_day = datetime.datetime.strptime(day[2], "%Y-%m-%d")
+            if processed_day.strftime("%A") == "Sunday":
+                weeks_of_the_month[counter].append(day)
+                counter += 1
+            else:
+                weeks_of_the_month[counter].append(day)
+        counter = 0
+
+    return weeks_of_the_month
 
 
 def main():

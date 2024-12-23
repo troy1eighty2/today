@@ -20,4 +20,10 @@ log your habit
 display all heatmaps
 
 ex:
+habit
+Jan     Feb
+xoooooo ooooooo
+ooooooo xxxxxxx
+ooooooo
+xooooox
 
