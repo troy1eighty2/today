@@ -162,12 +162,12 @@ def track(arguments):
     conn.close()
 
 
-def view(arguments):
-    green_square = "\033[32m■\033[0m"  # Green square
-    gray_square = "\033[90m■\033[0m"  # Gray square
-
+def dashboard():
     # DASHBOARD
+    welcome = datetime.datetime.now().strftime(f"Today is %A, %B %-d, %Y")
     current_hour = datetime.datetime.now().hour
+    current_day = datetime.datetime.now().strftime(f"%Y-%m-%d")
+
     print("")
     if current_hour <= 12:
         print("Good morning", end="")
@@ -178,71 +178,104 @@ def view(arguments):
     print(f", {getpass.getuser()}.")
     print("")
 
-    # if no arguments, then there are no more tasks
-    # if there are some tasks left, inform that there are more tasks
-    # print("there are no more tasks")
-    # print("")
+    print(welcome)
+    print("")
+
+    conn = sqlite3.connect('habits.db')
+    cursor = conn.cursor()
+    cursor.execute("PRAGMA foreign_keys = ON")
+    cursor.execute("""
+        SELECT *
+        FROM habits
+    """)
+    activities = [row[0] for row in cursor.fetchall()]
+
+    complete = []
+    incomplete = []
+
+    for activity in activities:
+        cursor.execute("""
+            SELECT status
+            FROM log
+            WHERE habit = ? AND date = ?
+        """, (activity, current_day))
+        result = [row[0] for row in cursor.fetchall()][0]
+        if not result:
+            incomplete.append(activity)
+        else:
+            complete.append(activity)
+
+    if not incomplete and complete:
+        print("You're done for the day.")
+    else:
+        print("Complete: ", end="")
+        for n in complete:
+            print(f"{n} ", end="")
+        print("")
+        print("Incomplete: ", end="")
+        for n in incomplete:
+            print(f"{n} ", end="")
+        print("")
+
+
+def view(arguments):
+    green_square = "\033[32m■\033[0m"  # Green square
+    gray_square = "\033[90m■\033[0m"  # Gray square
+
+    dashboard()
+    print("")
 
     conn = sqlite3.connect('habits.db')
     cursor = conn.cursor()
     cursor.execute("PRAGMA foreign_keys = ON")
 
-    if not arguments:
-        cursor.execute("""
-            SELECT *
-            FROM habits
-        """)
-        activities = [row[0] for row in cursor.fetchall()]
-        if not activities:
-            print("No activites tracked")
-        else:
-            print(
-                "Jan     Feb     Mar     Apr     May     Jun     Jul     Aug     Sep     Oct     Nov     Dec")
-            for activity in activities:
-                cursor.execute("""
-                    SELECT *
-                    FROM log
-                    WHERE habit = ?
-                    ORDER BY date ASC
-                """, (activity,))
-                print(activity)
-                result = cursor.fetchall()
-                weeks_of_the_month = group(result)
-                for week in weeks_of_the_month:
-                    previous_month = 1
-                    spacing = 7
-                    for day in week:
-                        processed_day = datetime.datetime.strptime(
-                            day[2], "%Y-%m-%d")
-                        months_offset = processed_day.month - previous_month
-                        if processed_day.month != previous_month:
-                            for j in range(spacing):
-                                print(" ", end="")
-                            if months_offset > 1:
-                                for i in range(months_offset - 1):
-                                    for j in range(7):
-                                        print(" ", end="")
-                                print(" ", end="")
-                                for i in range(months_offset-2):
-                                    print(" ", end="")
-
-                            print(" ", end="")
-                            previous_month = processed_day.month
-                            spacing = 7
-                        if day[-1] == 1:
-                            print(green_square, end="")
-                        else:
-                            print(gray_square, end="")
-                        spacing -= 1
-                    print("")
-
+    cursor.execute("""
+        SELECT *
+        FROM habits
+    """)
+    activities = [row[0] for row in cursor.fetchall()]
+    if not activities:
+        print("No activites tracked")
     else:
-        pass
-        # # print by year month date
-        #
-        # if len(arguments) == 3:
-        # elif len(arguments) == 2:
-        # else:
+        print(
+            "Jan     Feb     Mar     Apr     May     Jun     Jul     Aug     Sep     Oct     Nov     Dec")
+        for activity in activities:
+            cursor.execute("""
+                SELECT *
+                FROM log
+                WHERE habit = ?
+                ORDER BY date ASC
+            """, (activity,))
+            print(activity)
+            result = cursor.fetchall()
+            weeks_of_the_month = group(result)
+            for week in weeks_of_the_month:
+                previous_month = 1
+                spacing = 7
+                for day in week:
+                    processed_day = datetime.datetime.strptime(
+                        day[2], "%Y-%m-%d")
+                    months_offset = processed_day.month - previous_month
+                    if processed_day.month != previous_month:
+                        for j in range(spacing):
+                            print(" ", end="")
+                        if months_offset > 1:
+                            for i in range(months_offset - 1):
+                                for j in range(7):
+                                    print(" ", end="")
+                            print(" ", end="")
+                            for i in range(months_offset-2):
+                                print(" ", end="")
+
+                        print(" ", end="")
+                        previous_month = processed_day.month
+                        spacing = 7
+                    if day[-1] == 1:
+                        print(green_square, end="")
+                    else:
+                        print(gray_square, end="")
+                    spacing -= 1
+                print("")
 
 
 def group(rows):
