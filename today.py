@@ -177,18 +177,11 @@ def view(arguments):
     print(f", {getpass.getuser()}.")
     print("")
 
-    print(f"The date is ")
-    print("")
-    print(f"The high for today is and the low is")
-    print("")
-
     # if no arguments, then there are no more tasks
     # if there are some tasks left, inform that there are more tasks
-    print("there are no more tasks")
-    print("")
+    # print("there are no more tasks")
+    # print("")
 
-    print("Habit")
-    print("Jan     Feb     Mar     Apr     May     Jun     Jul     Aug     Sep     Oct     Nov     Dec")
     conn = sqlite3.connect('habits.db')
     cursor = conn.cursor()
     cursor.execute("PRAGMA foreign_keys = ON")
@@ -196,38 +189,51 @@ def view(arguments):
     if not arguments:
         cursor.execute("""
             SELECT *
-            FROM log
-            ORDER BY habit ASC, date ASC
+            FROM habits
         """)
-
-        result = cursor.fetchall()
-        weeks_of_the_month = group(result)
-        for week in weeks_of_the_month:
-            previous_month = 1
-            spacing = 7
-            for day in week:
-                processed_day = datetime.datetime.strptime(day[2], "%Y-%m-%d")
-                months_offset = processed_day.month - previous_month
-                if processed_day.month != previous_month:
-                    for j in range(spacing):
-                        print(" ", end="")
-                    if months_offset > 1:
-                        for i in range(months_offset - 1):
-                            for j in range(7):
-                                print(" ", end="")
-                        print(" ", end="")
-                        for i in range(months_offset-2):
-                            print(" ", end="")
-
-                    print(" ", end="")
-                    previous_month = processed_day.month
+        activities = [row[0] for row in cursor.fetchall()]
+        if not activities:
+            print("No activites tracked")
+        else:
+            print(
+                "Jan     Feb     Mar     Apr     May     Jun     Jul     Aug     Sep     Oct     Nov     Dec")
+            for activity in activities:
+                cursor.execute("""
+                    SELECT *
+                    FROM log
+                    WHERE habit = ?
+                    ORDER BY date ASC
+                """, (activity,))
+                print(activity)
+                result = cursor.fetchall()
+                weeks_of_the_month = group(result)
+                for week in weeks_of_the_month:
+                    previous_month = 1
                     spacing = 7
-                if day[-1] == 1:
-                    print(green_square, end="")
-                else:
-                    print(gray_square, end="")
-                spacing -= 1
-            print("")
+                    for day in week:
+                        processed_day = datetime.datetime.strptime(
+                            day[2], "%Y-%m-%d")
+                        months_offset = processed_day.month - previous_month
+                        if processed_day.month != previous_month:
+                            for j in range(spacing):
+                                print(" ", end="")
+                            if months_offset > 1:
+                                for i in range(months_offset - 1):
+                                    for j in range(7):
+                                        print(" ", end="")
+                                print(" ", end="")
+                                for i in range(months_offset-2):
+                                    print(" ", end="")
+
+                            print(" ", end="")
+                            previous_month = processed_day.month
+                            spacing = 7
+                        if day[-1] == 1:
+                            print(green_square, end="")
+                        else:
+                            print(gray_square, end="")
+                        spacing -= 1
+                    print("")
 
     else:
         pass
