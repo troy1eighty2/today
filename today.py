@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import json
 import dotenv
 import sqlite3
 import datetime
@@ -9,6 +10,8 @@ import getpass
 
 
 dotenv.load_dotenv()
+with open("./config.json", "r") as file:
+    config = json.load(file)
 
 
 def createDatabase():
@@ -83,7 +86,7 @@ def habits(arguments):
                 """, (n,))
                 conn.commit()
                 date_range = pandas.date_range(
-                    start="2023-01-01", end="2023-12-31")
+                    start=f"{config["year"]}-01-01", end=f"{config["year"]}-12-31")
                 for el in date_range:
                     # print(el.strftime("%A"))
                     day = f"{
@@ -144,13 +147,11 @@ def track(arguments):
                 WHERE habit = ? AND date = ?
             """, (arguments[0], date_object))
             result = cursor.fetchall()
-            if len(result) == 0:
-                cursor.execute("""
-                    INSERT INTO log (habit, date, status)
-                    VALUES (?,?,?)
-                """, (arguments[0], date_object, int(arguments[1])))
-                conn.commit()
+            print(result)
+            if not result:
+                print("date doesnt exist")
             else:
+                print("perform operation")
                 cursor.execute("""
                     UPDATE log
                     SET status = ?
@@ -278,7 +279,7 @@ def group(rows):
 
 def main():
     createDatabase()
-    args = parseInput()
+    parseInput()
 
 
 if __name__ == "__main__":
