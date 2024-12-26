@@ -1,3 +1,4 @@
 {
-  "year": 2024
+  "year": 2024,
+  "path_to_db": "~/MyStuff/today/habits.db"
 }

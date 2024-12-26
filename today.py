@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import json
+import os
 import dotenv
 import sqlite3
 import datetime
@@ -10,12 +11,13 @@ import getpass
 
 
 dotenv.load_dotenv()
-with open("./config.json", "r") as file:
+config_path = os.path.expanduser("~/MyStuff/today/config.json")
+with open(config_path, "r") as file:
     config = json.load(file)
 
 
 def createDatabase():
-    conn = sqlite3.connect("habits.db")
+    conn = sqlite3.connect(os.path.expanduser(config["path_to_db"]))
     cursor = conn.cursor()
     cursor.execute("PRAGMA foreign_keys = ON")
     cursor.execute("""
@@ -59,7 +61,7 @@ def parseInput():
 
 def habits(arguments):
 
-    conn = sqlite3.connect("habits.db")
+    conn = sqlite3.connect(os.path.expanduser(config["path_to_db"]))
     cursor = conn.cursor()
     cursor.execute("PRAGMA foreign_keys = ON")
 
@@ -116,7 +118,7 @@ def track(arguments):
     if not arguments or len(arguments) != 2:
         print("provide proper number of arguments. refer to README or -h for help")
         return
-    conn = sqlite3.connect("habits.db")
+    conn = sqlite3.connect(os.path.expanduser(config["path_to_db"]))
     cursor = conn.cursor()
     cursor.execute("PRAGMA foreign_keys = ON")
 
@@ -181,7 +183,7 @@ def dashboard():
     print(welcome)
     print("")
 
-    conn = sqlite3.connect('habits.db')
+    conn = sqlite3.connect(os.path.expanduser(config["path_to_db"]))
     cursor = conn.cursor()
     cursor.execute("PRAGMA foreign_keys = ON")
     cursor.execute("""
@@ -225,7 +227,7 @@ def view(arguments):
     dashboard()
     print("")
 
-    conn = sqlite3.connect('habits.db')
+    conn = sqlite3.connect(os.path.expanduser(config["path_to_db"]))
     cursor = conn.cursor()
     cursor.execute("PRAGMA foreign_keys = ON")
 
