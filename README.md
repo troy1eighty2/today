@@ -16,15 +16,7 @@ add or remove habits to be tracked
 
 log your habit
 
-`today view [month] [year] [day]`
+`today view`
 
 display all heatmaps
-
-ex:
-habit
-Jan     Feb
-xoooooo ooooooo
-ooooooo xxxxxxx
-ooooooo
-xooooox
 
