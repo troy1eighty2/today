@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import json
+import random
 import os
 import dotenv
 import sqlite3
@@ -94,6 +95,13 @@ def habits(arguments):
                     day = f"{
                         el.year}-{el.month:02d}-{el.day:02d}"
                     print(day)
+                    # sample complete jawn using random values
+                    # rando = random.randint(0, 1)
+                    # cursor.execute("""
+                    #     INSERT INTO log (habit, date, status)
+                    #     VALUES (?,?,?)
+                    # """, (n, day, rando))
+                    # correct execute
                     cursor.execute("""
                         INSERT INTO log (habit, date, status)
                         VALUES (?,?,?)
@@ -195,6 +203,8 @@ def dashboard():
     complete = []
     incomplete = []
 
+    if not activities:
+        return
     for activity in activities:
         cursor.execute("""
             SELECT status
@@ -222,7 +232,9 @@ def dashboard():
 
 def view(arguments):
     green_square = "\033[32m■\033[0m"  # Green square
+    # green_square = "🟩"
     gray_square = "\033[90m■\033[0m"  # Gray square
+    # gray_square = "⬜"
 
     dashboard()
     print("")
