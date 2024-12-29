@@ -211,11 +211,15 @@ def dashboard():
             FROM log
             WHERE habit = ? AND date = ?
         """, (activity, current_day))
-        result = [row[0] for row in cursor.fetchall()][0]
+        result = cursor.fetchall()
         if not result:
             incomplete.append(activity)
         else:
-            complete.append(activity)
+            curr = result[0][0]
+            if not curr:
+                incomplete.append(activity)
+            else:
+                complete.append(activity)
 
     if not incomplete and complete:
         print("You're done for the day.")
