@@ -174,7 +174,7 @@ def track(arguments):
 
 def dashboard():
     # DASHBOARD
-    welcome = datetime.datetime.now().strftime(f"Today is %A, %B %-d, %Y")
+    welcome = datetime.datetime.now().strftime(f"Today is %A, %B %-d, %Y. ")
     current_hour = datetime.datetime.now().hour
     current_day = datetime.datetime.now().strftime(f"%Y-%m-%d")
 
@@ -191,6 +191,9 @@ def dashboard():
     print(welcome)
     print("")
 
+    days_left = datetime.datetime(
+        config["year"], 12, 31) - datetime.datetime.now()
+
     conn = sqlite3.connect(os.path.expanduser(config["path_to_db"]))
     cursor = conn.cursor()
     cursor.execute("PRAGMA foreign_keys = ON")
@@ -198,6 +201,10 @@ def dashboard():
         SELECT *
         FROM habits
     """)
+
+    print(f"There are only {days_left.days} days left in the year.")
+    print("")
+
     activities = [row[0] for row in cursor.fetchall()]
 
     complete = []
