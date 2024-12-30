@@ -178,7 +178,6 @@ def dashboard():
     current_hour = datetime.datetime.now().hour
     current_day = datetime.datetime.now().strftime(f"%Y-%m-%d")
 
-    print("")
     if current_hour <= 12:
         print("Good morning", end="")
     elif current_hour <= 19:
@@ -186,13 +185,11 @@ def dashboard():
     else:
         print("Good evening", end="")
     print(f", {getpass.getuser()}.")
-    print("")
-
-    print(welcome)
-    print("")
 
     days_left = datetime.datetime(
         config["year"], 12, 31) - datetime.datetime.now()
+
+    print(f"{welcome}There are only {days_left.days} days left in the year.")
 
     conn = sqlite3.connect(os.path.expanduser(config["path_to_db"]))
     cursor = conn.cursor()
@@ -201,9 +198,6 @@ def dashboard():
         SELECT *
         FROM habits
     """)
-
-    print(f"There are only {days_left.days} days left in the year.")
-    print("")
 
     activities = [row[0] for row in cursor.fetchall()]
 
