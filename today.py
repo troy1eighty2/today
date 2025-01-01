@@ -187,7 +187,7 @@ def dashboard():
     print(f", {getpass.getuser()}.")
 
     days_left = datetime.datetime(
-        config["year"], 12, 31) - datetime.datetime.now()
+        config["year"] + 1, 1, 1) - datetime.datetime.now()
 
     print(f"{welcome}There are only {days_left.days} days left in the year.")
 
